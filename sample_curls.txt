@@ -1,0 +1,39 @@
+# 1. simple comparison — price >= 100  → single wall cup (120), dome lid (200)
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"price >= 100\"}"
+
+# 2. AND — cups under 100 in stock  → double wall cup
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"category = \\\"cups\\\" AND price < 100\"}"
+
+# 3. OR with parens (from the brief)  → flat lid, dome lid
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"category = \\\"lids\\\" AND (color = \\\"white\\\" OR color = \\\"black\\\")\"}"
+
+# 4. CONTAINS (case-insensitive)  → single wall cup
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"name CONTAINS \\\"single wall\\\"\"}"
+
+# 5. IN  → single wall cup (tier 1), double wall cup (tier 2), flat lid (tier 3)
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"tier IN [1, 2, 3]\"}"
+
+# 6. NOT bare boolean  → all except flat lid (which is discontinued)
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"NOT discontinued\"}"
+
+# 7. BETWEEN  → double wall cup (80), single wall cup (120)
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"price BETWEEN 50 AND 150\"}"
+
+# 8. qty_available (the brief's exact field)  → single wall cup (600), flat lid (900)
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"qty_available >= 500\"}"
+
+--------------------------------------------------------------------------
+
+error cases
+
+# 9. unknown field  → 400 "Unknown field 'colour'"
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"colour = \\\"white\\\"\"}"
+
+# 10. type mismatch  → 400 "price is number, cannot compare..."
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"price > \\\"white\\\"\"}"
+
+# 11. malformed syntax  → 400 located error
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"price > > 100\"}"
+
+# 12. illegal character  → 400 "Unexpected character '@'..."
+curl -X POST http://127.0.0.1:8000/api/filter/ -H "Content-Type: application/json" -d "{\"expression\": \"price > @\"}"
