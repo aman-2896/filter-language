@@ -1,7 +1,7 @@
 from django.urls import path
-from product_filter.views import filter_products,use_signals
+from product_filter.views import filter_products,health_check
 
 urlpatterns=[
-    path('v1/filter/',filter_products),
-    path('/use-signals',use_signals)
+    path('filter/',filter_products),
+    path('health/', health_check),
 ]

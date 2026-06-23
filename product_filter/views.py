@@ -8,6 +8,7 @@ from product_filter.engine.evaluator import evaluation
 from product_filter.engine.validator import validate
 from product_filter.engine.orm_compiler import convert_to_q
 from product_filter.models import Product
+from product_filter.signals import health_checked
 
 MAX_EXPRESSION_LENGTH=1000
 @csrf_exempt
@@ -40,5 +41,6 @@ def filter_products(request):
     results=list(Product.objects.filter(q).values())
     return JsonResponse({"results":results,"count":len(results)})
 
-def use_signals(request):
-    print("hello")
+def health_check(request):
+    health_checked.send(sender="health_check")   # fire our custom signal
+    return JsonResponse({"status": "ok"})
