@@ -1,6 +1,7 @@
 from django.urls import path
-from product_filter.views import filter_products
+from product_filter.views import filter_products,use_signals
 
 urlpatterns=[
-    path('filter/',filter_products)
+    path('v1/filter/',filter_products),
+    path('/use-signals',use_signals)
 ]

@@ -39,3 +39,6 @@ def filter_products(request):
     q = convert_to_q(ast)
     results=list(Product.objects.filter(q).values())
     return JsonResponse({"results":results,"count":len(results)})
+
+def use_signals(request):
+    print("hello")

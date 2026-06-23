@@ -1,0 +1,32 @@
+# Don't copy these into the image — they bloat it, slow the build, or shouldn't
+# be baked in. (Same idea as .gitignore, but for what goes INTO the image.)
+
+# Virtual environment — the image installs its own deps via requirements.txt,
+# so copying your local venv in is wasteful and can even break things.
+.venv/
+venv/
+
+# Python caches — regenerated automatically, just noise.
+__pycache__/
+*.py[cod]
+
+# Local database — the container creates and seeds its own fresh DB on startup,
+# so we must NOT copy your local one in (it would override the fresh seed).
+db.sqlite3
+
+# Test / tooling caches — not needed at runtime.
+.pytest_cache/
+.coverage
+
+# Git internals — no reason to copy the repo history into the image.
+.git/
+.gitignore
+
+# Editor / OS junk.
+.vscode/
+.idea/
+.DS_Store
+
+# Docker's own files don't need to be inside the image.
+Dockerfile
+.dockerignore
